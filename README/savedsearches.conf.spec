@@ -16,10 +16,6 @@ action.create_thehive_alert.param.source = <string>
 * Alert source. Defaults to "Splunk"
 * (required)
 
-action.create_thehive_alert.param.unique = <string>
-* Field name that contains a unique identifier specific to the source event.
-* (required)
-
 action.create_thehive_alert.param.title = <string>
 * Alert Title to use in theHive.
 * (required)
