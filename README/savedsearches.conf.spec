@@ -3,10 +3,6 @@
 action.thehive_create_alert = [0|1]
 * Enable thehive_create_case notification
 
-action.thehive_create_alert.param.URL = <string>
-* URL of theHive instance. 
-* (required)
-
 action.thehive_create_alert.param.caseTemplate = <string>
 * The case template to use for imported alerts.
 * Defaults to "default"
@@ -25,7 +21,7 @@ action.thehive_create_alert.param.unique = <string>
 * (required)
 
 action.thehive_create_alert.param.title = <string>
-* Alert Title to use in theHive. 
+* Alert Title to use in theHive.
 * (required)
 
 action.thehive_create_alert.param.description = <string>
