@@ -3,7 +3,12 @@
 # most of the code here was based on the following example on splunk custom alert actions
 # http://docs.splunk.com/Documentation/Splunk/6.5.3/AdvancedDev/ModAlertsAdvancedExample
 
-import os, sys, json, gzip, csv, requests
+import os
+import sys
+import json
+import gzip
+import csv
+import requests
 import uuid
 from requests.auth import HTTPBasicAuth
 
@@ -13,11 +18,10 @@ def create_alert(config, row):
 	url = config.get('URL') # Get TheHive URL from Splunk configuration
 	sourceRef = str(uuid.uuid4())[0:6] # Generate unique identifier for alert
 
-
-	# Splunk makes a bunch of dumb empty multivalue fields - we filter those out here
+	# Filter empty multivalue fields
 	row = {key: value for key, value in row.iteritems() if not key.startswith("__mv_")}
 
-	# now we take those KV pairs and make a list-type of dicts
+	# Take KV pairs and make a list-type of dicts
 	artifacts = []
 	for key, value in row.iteritems():
 		artifacts.append(dict(
@@ -26,7 +30,7 @@ def create_alert(config, row):
 			message = "%s observed in this alert" % key
 		))
 
-	# get the payload for the alert from the config, use defaults if they are not specified
+	# Get the payload for the alert from the config, use defaults if they are not specified
 	payload = json.dumps(dict(
 		title = config.get('title'),
 		description = config.get('description', "No description provided."),
@@ -46,7 +50,7 @@ def create_alert(config, row):
 		headers = {'Content-type': 'application/json'}
 		# post alert
 		response = requests.post(url, headers=headers, data=payload, auth=('username', 'password'), verify=False)
-		print >> sys.stderr, "INFO theHive server responded with HTTP status %s" % response.status_code
+		print >> sys.stderr, "INFO TheHive server responded with HTTP status %s" % response.status_code
 		# check if status is anything other than 200; throw an exception if it is
 		response.raise_for_status()
 		# response is 200 by this point or we would have thrown an exception
