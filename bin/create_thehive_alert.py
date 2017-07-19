@@ -16,6 +16,8 @@ def create_alert(config, row):
 	print >> sys.stderr, "DEBUG Creating alert with config %s" % config
 
 	url = config.get('URL') # Get TheHive URL from Splunk configuration
+	username = config.get('username') # Get TheHive username from Splunk configuration
+	password = config.get('password') # Get TheHive password from Splunk configuration
 	sourceRef = str(uuid.uuid4())[0:6] # Generate unique identifier for alert
 
 	# Filter empty multivalue fields
