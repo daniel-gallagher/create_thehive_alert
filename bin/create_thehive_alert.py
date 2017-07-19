@@ -4,21 +4,20 @@
 # http://docs.splunk.com/Documentation/Splunk/6.5.3/AdvancedDev/ModAlertsAdvancedExample
 
 import os, sys, json, gzip, csv, requests
+import uuid
 from requests.auth import HTTPBasicAuth
 
 def create_alert(config, row):
 	print >> sys.stderr, "DEBUG Creating alert with config %s" % config
-	# get the URL we need
-	url = config.get('URL')
-	
-	# get the payload for the alert from the config, use defaults if they are not specified
-	
-	# Splunk makes a bunch of dumb empty multivalue fields - we filter those out here 
+
+	url = config.get('URL') # Get TheHive URL from Splunk configuration
+	sourceRef = str(uuid.uuid4())[0:6] # Generate unique identifier for alert
+
+
+	# Splunk makes a bunch of dumb empty multivalue fields - we filter those out here
 	row = {key: value for key, value in row.iteritems() if not key.startswith("__mv_")}
-	# find the field name used for a unique identifier and strip it from the row
-	id = config.get('unique') # it's a little weird but this grabs the field name
-	sourceRef = row.pop(id) # grabs that field's value and assigns it to our sourceRef 
-	# now we take those KV pairs and make a list-type of dicts 
+
+	# now we take those KV pairs and make a list-type of dicts
 	artifacts = []
 	for key, value in row.iteritems():
 		artifacts.append(dict(
@@ -26,8 +25,8 @@ def create_alert(config, row):
 			data = value,
 			message = "%s observed in this alert" % key
 		))
-	# theHive API documentation seems to allow raw numbers
-	# https://github.com/CERT-BDF/TheHive/wiki/API%20documentation
+
+	# get the payload for the alert from the config, use defaults if they are not specified
 	payload = json.dumps(dict(
 		title = config.get('title'),
 		description = config.get('description', "No description provided."),
@@ -38,11 +37,11 @@ def create_alert(config, row):
 		artifacts = artifacts,
 		source = config.get('source', "splunk"),
 		caseTemplate = config.get('caseTemplate', "default"),
-		sourceRef = sourceRef # I like to use eval id=md5(_raw) 
+		sourceRef = sourceRef
 	))
 	# actually send the request to create the alert; fail gracefully
 	try:
-		print >> sys.stderr, 'INFO Calling url="%s" with payload=%s' % (url, payload) 
+		print >> sys.stderr, 'INFO Calling url="%s" with payload=%s' % (url, payload)
 		# set proper headers
 		headers = {'Content-type': 'application/json'}
 		# post alert
@@ -58,8 +57,8 @@ def create_alert(config, row):
 	# some other request error occurred
 	except requests.exceptions.RequestException as e:
 		print >> sys.stderr, "ERROR Error creating alert: %s" % e
-		
-	
+
+
 if __name__ == "__main__":
 	# make sure we have the right number of arguments - more than 1; and first argument is "--execute"
 	if len(sys.argv) > 1 and sys.argv[1] == "--execute":
