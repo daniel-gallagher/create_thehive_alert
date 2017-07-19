@@ -18,6 +18,7 @@ def create_alert(config, row):
 	url = config.get('url') # Get TheHive URL from Splunk configuration
 	username = config.get('username') # Get TheHive username from Splunk configuration
 	password = config.get('password') # Get TheHive password from Splunk configuration
+	auth = requests.auth.HTTPBasicAuth(username=username,password=password)
 	sourceRef = str(uuid.uuid4())[0:6] # Generate unique identifier for alert
 
 	# Filter empty multivalue fields
@@ -51,7 +52,7 @@ def create_alert(config, row):
 		# set proper headers
 		headers = {'Content-type': 'application/json'}
 		# post alert
-		response = requests.post(url, headers=headers, data=payload, auth=('username', 'password'), verify=False)
+		response = requests.post(url, headers=headers, data=payload, auth=auth, verify=False)
 		print >> sys.stderr, "INFO TheHive server responded with HTTP status %s" % response.status_code
 		# check if status is anything other than 200; throw an exception if it is
 		response.raise_for_status()
@@ -71,7 +72,7 @@ if __name__ == "__main__":
 		# read the payload from stdin as a json string
 	   	payload = json.loads(sys.stdin.read())
 		# extract the file path and alert config from the payload
-		configuration = payload.get('configuration')
+		config = payload.get('configuration')
 		filepath = payload.get('results_file')
 		# test if the results file exists - this should basically never fail unless we are parsing configuration incorrectly
 		# example path this variable should hold: '/opt/splunk/var/run/splunk/12938718293123.121/results.csv.gz'
@@ -88,7 +89,7 @@ if __name__ == "__main__":
 					# iterate through each row, creating a alert for each and then adding the observables from that row to the alert that was created
 					for row in reader:
 						# make the alert with predefined function; fail gracefully
-						create_alert(configuration, row)
+						create_alert(config, row)
 				# by this point - all alerts should have been created with all necessary observables attached to each one
 				# we can gracefully exit now
 				sys.exit(0)
