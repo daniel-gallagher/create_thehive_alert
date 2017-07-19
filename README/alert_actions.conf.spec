@@ -11,6 +11,3 @@
 # optional components.
 
 [create_thehive_alert]
-param.url = <string>
-param.username = <string>
-param.password = <string>
