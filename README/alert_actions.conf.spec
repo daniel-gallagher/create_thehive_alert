@@ -11,6 +11,6 @@
 # optional components.
 
 [create_thehive_alert]
-action.create_thehive_alert.param.url = <string>
-action.create_thehive_alert.param.username = <string>
-action.create_thehive_alert.param.password = <string>
+param.url = <string>
+param.username = <string>
+param.password = <string>
