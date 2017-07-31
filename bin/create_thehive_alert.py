@@ -52,7 +52,7 @@ def create_alert(config, row):
 		# set proper headers
 		headers = {'Content-type': 'application/json'}
 		# post alert
-		response = requests.post(url, headers=headers, data=payload, auth=auth, verify=False)
+		response = requests.post(url=url + "/api/alert", headers=headers, data=payload, auth=auth, verify=False)
 		print >> sys.stderr, "INFO TheHive server responded with HTTP status %s" % response.status_code
 		# check if status is anything other than 200; throw an exception if it is
 		response.raise_for_status()
