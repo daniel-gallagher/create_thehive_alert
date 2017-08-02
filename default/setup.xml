@@ -4,7 +4,7 @@
     </block>
     <block title="Server" endpoint="admin/alert_actions" entity="create_thehive_alert">
         <input field="param.url">
-            <label>Server URL (ex. http://server.com/api/alert)</label>
+            <label>Server Base URL (ex. http://server.com)</label>
             <type>text</type>
         </input>
         <input field="param.username">
